@@ -85,7 +85,7 @@ function(input, output, session) {
     # Update mode, popup, and color scales based on mode input
     mode <- input$mode
     mode_data <- commute_data[[mode]]
-    popup <- paste0("GEOID: ", commute_data$GEOID, "<br>", "Percent of Households Commuting by Private Vehicle: ", round(mode_data,2))
+    popup <- paste0("GEOID: ", commute_data$GEOID, "<br>", "Percent of Households Commuting by ", mode, ": ", round(mode_data,2))
     pal <- colorNumeric(
       palette = "YlGnBu",
       domain = mode_data
