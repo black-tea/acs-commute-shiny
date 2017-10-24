@@ -8,7 +8,10 @@ mode_vars <- c(
   "Bicycle" = "bicycle_pct",
   "Walked" = "walk_pct"
 )
-
+geo_vars <- c(
+  "LA City - Tract" = "city_tract",
+  "LA County - Tract" = "county_tract"
+)
 
 navbarPage("ACS Means of Transportation to Work", id="nav",
            
@@ -30,6 +33,7 @@ navbarPage("ACS Means of Transportation to Work", id="nav",
                                       
                                       h2("Map explorer"),
                                       
+                                      selectInput("geography","Geography",geo_vars, selected = "county_tract"),
                                       selectInput("mode", "Mode", mode_vars, selected = "car_pct")
                                       
                                       #plotOutput("histCentile", height = 200),
