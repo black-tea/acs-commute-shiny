@@ -2,6 +2,12 @@
 ##### This app displays census tract-level commute mode splits #####
 ##### I am interested in ACS 5-year estimates                  #####
 
+##### Next Steps
+##### 1. Small bar chart on right showing past five years
+##### 2. Option: Latest Estimate vs. Changes 
+##### w/ dynamic fields allowing them to select which years to compare
+##### 3. Format "mode" more nicely on server side
+
 ##### Setup
 library(acs) # For downloading ACS Data
 library(tigris) # For census boundary data
@@ -16,9 +22,6 @@ api.key.install(key="00a2d85a7c7b1346879d0e355cc0361f30188f28") # ACS Data API K
 la_boundary <- rgdal::readOGR('data/LACityBoundary/CityBoundary.shp')
 la_boundary <- st_as_sf(la_boundary)
 la_boundary <- st_transform(la_boundary, 4326)
-
-#filename <- system.file("data/LACityBoundary/CityBoundary", package="sf")
-#filename <- st_read(filename)
 
 # Tigris: ACS Boundaries
 options(tigris_class = "sf")
@@ -41,7 +44,6 @@ commute_df <- data.frame(paste0(str_pad(la_tract_modesplit@geography$state, 2, "
                          stringsAsFactors = FALSE)
 
 # Clean & Format df
-#commute_df <- select(commute_df, 1:6)
 rownames(commute_df)<-1:nrow(commute_df)
 names(commute_df)<-c("GEOID", "total", "car", "transit", "bicycle", "walk")
 
@@ -64,7 +66,9 @@ function(input, output, session) {
   # Create the map
   output$map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles("CartoDB.Positron") 
+      addProviderTiles("CartoDB.Positron") %>%
+      addPolygons(data = la_boundary,
+                  fill = FALSE)
   })
   
   # This observer is responsible for maintaining the geography
