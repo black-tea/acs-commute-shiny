@@ -15,6 +15,7 @@ library(leaflet) # For interactive mapping
 library(rgdal) # For importing shapefiles
 library(sf) # For manipulating spatial data
 api.key.install(key="00a2d85a7c7b1346879d0e355cc0361f30188f28") # ACS Data API Key
+options(tigris_use_cache = TRUE)
 #setwd("~/GitHub/acs-commute-shiny/acs_commute/data/LACityBoundary")
 
 ##### Download / Prep Data
@@ -29,7 +30,7 @@ tracts <- tracts(state = 'CA', county = "037", cb=TRUE) # If cb is set to TRUE, 
 
 # ACS: Means of Transportation for all census tracts in the Los Angeles County
 la_tracts <- geo.make(state = "CA", county = "Los Angeles", tract = "*")
-la_tract_modesplit <- acs.fetch(endyear = 2015, geography = la_tracts, table.number = "B08301", col.names = "pretty")
+la_tract_modesplit <- acs.fetch(endyear = 2015, span = 5, geography = la_tracts, table.number = "B08301", col.names = "pretty")
 
 # Convert to data.frame for merging
 commute_df <- data.frame(paste0(str_pad(la_tract_modesplit@geography$state, 2, "left", pad="0"), 

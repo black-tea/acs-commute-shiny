@@ -12,6 +12,10 @@ geo_vars <- c(
   "LA City - Tract" = "city_tract",
   "LA County - Tract" = "county_tract"
 )
+map_color_vars <- c(
+  "Latest 5-Year Estimate" = "5yr_est",
+  "Change over Time" = "time_change"
+)
 
 navbarPage("ACS Means of Transportation to Work", id="nav",
            
@@ -34,7 +38,13 @@ navbarPage("ACS Means of Transportation to Work", id="nav",
                                       h2("Map explorer"),
                                       
                                       selectInput("geography","Geography",geo_vars, selected = "city_tract"),
-                                      selectInput("mode", "Commute Mode", mode_vars, selected = "car_pct")
+                                      selectInput("mode", "Commute Mode", mode_vars, selected = "car_pct"),
+                                      selectInput("maptype", "Map Color", map_color_vars, selected = "5yr_est"),
+                                      HTML("<i>This map was compiled based on data from the American Communities Survey. To see a list of
+                                             currently available ACS Estimates, visit <a href='https://www.socialexplorer.com/data/metadata/'>
+                                        Social Explorer</a>. To understand the differences between different types of ACS Estimates,
+                                             visit <a href='https://www.census.gov/programs-surveys/acs/guidance/estimates.html'>this ACS
+                                             Guidance Document</a></i>")
                                       
                                       #plotOutput("histCentile", height = 200),
                                       #plotOutput("scatterCollegeIncome", height = 250)

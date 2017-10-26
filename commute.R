@@ -26,7 +26,9 @@ options(tigris_class = "sf")
 tracts <- tracts(state = 'CA', county = "Los Angeles", cb=TRUE) # If cb is set to TRUE, download a generalized (1:500k) tracts file. Defaults to FALSE (the most detailed TIGER/Line file)
 
 # ACS: Means of Transportation for all census tracts in the Los Angeles County
+years <- c(2010,2011,2012,2013,2014,2015)
 la_tracts <- geo.make(state = "CA", county = "Los Angeles", tract = "*")
+la_tract_modesplit <- lapply(years, )
 la_tract_modesplit <- acs.fetch(endyear = 2015, geography = la_tracts, table.number = "B08301", col.names = "pretty")
 
 # Print data column names
