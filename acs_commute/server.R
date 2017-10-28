@@ -28,37 +28,16 @@ la_boundary <- st_transform(la_boundary, 4326)
 options(tigris_class = "sf")
 tracts <- tracts(state = 'CA', county = "037", cb=TRUE) # If cb is set to TRUE, download a generalized (1:500k) tracts file. Defaults to FALSE (the most detailed TIGER/Line file)
 
-# ACS: Means of Transportation for all census tracts in the Los Angeles County
-la_tracts <- geo.make(state = "CA", county = "Los Angeles", tract = "*")
-la_tract_modesplit <- acs.fetch(endyear = 2015, span = 5, geography = la_tracts, table.number = "B08301", col.names = "pretty")
-
-# Convert to data.frame for merging
-commute_df <- data.frame(paste0(str_pad(la_tract_modesplit@geography$state, 2, "left", pad="0"), 
-                                str_pad(la_tract_modesplit@geography$county, 3, "left", pad="0"), 
-                                str_pad(la_tract_modesplit@geography$tract, 6, "left", pad="0")), 
-                         la_tract_modesplit@estimate[,c(
-                           "Means of Transportation to Work: Total:",
-                           "Means of Transportation to Work: Car, truck, or van:",
-                           "Means of Transportation to Work: Public transportation (excluding taxicab):",
-                           "Means of Transportation to Work: Bicycle",
-                           "Means of Transportation to Work: Walked")], 
-                         stringsAsFactors = FALSE)
-
-# Clean & Format df
-rownames(commute_df)<-1:nrow(commute_df)
-names(commute_df)<-c("GEOID", "total", "car", "transit", "bicycle", "walk")
-
-# Calculate & Add Mode Splits
-commute_df$car_pct <- 100*(commute_df$car/commute_df$total)
-commute_df$transit_pct <- 100*(commute_df$transit/commute_df$total)
-commute_df$bicycle_pct <- 100*(commute_df$bicycle/commute_df$total)
-commute_df$walk_pct <- 100*(commute_df$walk/commute_df$total)
+# Import commute_df
+commute_df <- read.table('data/acs_mode.csv',
+                         header = TRUE,
+                         sep = ',')
 
 # Examine resulting df
 head(commute_df)
 
 # Merge ACS df with Tigris Spatial data
-commute_merged <- geo_join(tracts, commute_df, "GEOID", "GEOID")
+commute_merged <- geo_join(tracts, commute_df, "GEOID", "tract_id")
 commute_merged <- st_transform(commute_merged, 4326)
 
 ##### Interactive Map

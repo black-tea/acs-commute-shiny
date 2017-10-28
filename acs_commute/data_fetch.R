@@ -17,7 +17,7 @@ la_tracts <- geo.make(state = "CA", county = "Los Angeles", tract = "*")
 la_tract_modesplit <- lapply(years, function(x) {
   
   # Get the year of the query
-  yr <- str(x)
+  print(x)
   
   # Use the ACS API to query for the data
   acs_result <- acs.fetch(endyear = x, 
@@ -46,9 +46,24 @@ la_tract_modesplit <- lapply(years, function(x) {
   year_df$walk_pct <- 100*(year_df$walk/year_df$total)
   
   # Subset out the perentages, then rename with year
+  pct_names <- c("car_pct", "transit_pct", "bicycle_pct", "walk_pct")
   year_pct <- data.frame(year_df[,c("car_pct", "transit_pct", "bicycle_pct", "walk_pct")])
-  names(year_pct) <- lapply()
+  names(year_pct) <- paste0(pct_names, "_", toString(x))
+  
+  return(year_pct)
 })
 
 # Create commute_df (similar to before)
 # Use do.call and cbind to then combine the list of dfs into the commute_df
+commute_df <- do.call(cbind, la_tract_modesplit)
+
+# Retrieve the tract IDs and then attach them to the df as well
+tract_fetch <- acs.fetch(endyear = 2015, span = 5, geography = la_tracts, table.number = "B08301", col.names = "pretty")
+tract_id <- paste0(str_pad(tract_fetch@geography$state, 2, "left", pad="0"), 
+                   str_pad(tract_fetch@geography$county, 3, "left", pad="0"), 
+                   str_pad(tract_fetch@geography$tract, 6, "left", pad="0"))
+commute_df <- cbind(tract_id, commute_df)
+
+# Export as CSV
+write.csv(commute_df, "C:/Users/Tim/Documents/GitHub/acs-commute-shiny/acs_commute/data/acs_mode.csv")
+
