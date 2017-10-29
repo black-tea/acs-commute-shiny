@@ -73,15 +73,15 @@ names(la_tract_modesplit) <- years
 function(input, output, session) {
   
   ### Create the map
-  # Add polygons ahead of time to set initial zoom level
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles("CartoDB.Positron") %>%
+      # Add polygons ahead of time to set initial zoom level
       addPolygons(data = la_boundary,
                   fill = FALSE)
   })
   
-  ### Calculate the values that will be mapped
+  ### Calculate the values that will be mapped, based on UI Input
   commute_merged <- reactive({
     if(input$maptype == '5yr_est'){
       
@@ -108,31 +108,39 @@ function(input, output, session) {
     return(result_df)
   })
   
-  ### Update Map Symbology & Legend based on UI Input
-  observe({
-    
-    # Geography input
+  ### Clip the geography, if needed, based on UI Input
+  commute_data <- reactive({
     geography <- input$geography
     if (geography == "city_tract"){
-      commute_data <- st_intersection(commute_merged(), la_boundary)
-    } else {
-      commute_data <- commute_merged()
+      clip_result <- st_intersection(commute_merged(), la_boundary)
+    } else{
+      clip_result <- commute_merged()
     }
+    return(clip_result)
+  })
+  
+  ### Subset out the mode, based on UI Input
+  mode_data <- reactive({
+    mode <- input$mode
+    return(commute_data()[[mode]])
+  })
+  
+  ### Update Map Symbology & Legend based on UI Input
+  observe({
 
     # Update mode, popup, and color scales based on mode input
-    mode <- input$mode
-    mode_data <- commute_data[[mode]]
-    popup <- paste0("GEOID: ", commute_data$GEOID, "<br>", "Percent of Households Commuting by ", mode, ": ", round(mode_data,2))
+    popup <- paste0("GEOID: ", commute_data()$GEOID, "<br>", "Percent of Households Commuting by ", input$mode, ": ", round(mode_data(),2))
     pal <- colorNumeric(
       palette = "YlGnBu",
-      domain = mode_data
+      domain = mode_data()
     )
 
     # Update the map
-    leafletProxy("map", data = commute_data) %>%
+    leafletProxy("map") %>%
       clearShapes() %>%
       clearControls() %>%
-      addPolygons(fillColor = ~pal(mode_data),
+      addPolygons(data = commute_data(),
+                  fillColor = ~pal(mode_data()),
                   color = "#b2aeae", # you need to use hex colors
                   fillOpacity = 0.7,
                   weight = 1,
@@ -140,9 +148,9 @@ function(input, output, session) {
                   stroke = FALSE,
                   popup = popup) %>%
       addLegend(pal = pal,
-                values = mode_data,
+                values = mode_data(),
                 position = "bottomleft",
-                title = paste0("Pct Commuting<br>by ", mode),
+                title = paste0("Pct Commuting<br>by ", input$mode),
                 labFormat = labelFormat(suffix = "%"))
   })
   
