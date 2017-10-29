@@ -124,21 +124,37 @@ function(input, output, session) {
     mode <- input$mode
     return(commute_data()[[mode]])
   })
+
   
   ### Update Map Symbology & Legend based on UI Input
   observe({
+    
+    # Formatting Mode for Legend & Popup
+    modevars <- list('car_pct' = 'Private Vehicle',
+                     'transit_pct' = 'Transit',
+                     'bicycle_pct' = 'Bicycle',
+                     'walk_pct' = 'Foot')
+    
+    # Legend  & Popup Title
+    if(input$maptype == '5yr_est'){
+      legend_title <- paste0("Percent Commuting<br>by ", modevars[input$mode])
+      popup_title <- paste0("Percent Commuting by ", modevars[input$mode])
+    } else if (input$maptype == 'time_change'){
+      legend_title <- paste0("Change in Percent<br>Commuting by<br>", modevars[input$mode])
+      popup_title <- paste0("Change in Percent Commuting by ", modevars[input$mode])
+    }  
 
     # Update mode, popup, and color scales based on mode input
-    popup <- paste0("GEOID: ", commute_data()$GEOID, "<br>", "Percent of Households Commuting by ", input$mode, ": ", round(mode_data(),2))
+    popup <- paste0("GEOID: ", commute_data()$GEOID, "<br>", popup_title, ": ", round(mode_data(),2))
     pal <- colorNumeric(
       palette = "YlGnBu",
       domain = mode_data()
     )
-
+    
     # Update the map
     leafletProxy("map") %>%
-      clearShapes() %>%
       clearControls() %>%
+      clearShapes() %>%
       addPolygons(data = commute_data(),
                   fillColor = ~pal(mode_data()),
                   color = "#b2aeae", # you need to use hex colors
@@ -150,8 +166,9 @@ function(input, output, session) {
       addLegend(pal = pal,
                 values = mode_data(),
                 position = "bottomleft",
-                title = paste0("Pct Commuting<br>by ", input$mode),
+                title = legend_title,
                 labFormat = labelFormat(suffix = "%"))
   })
+  
   
 }
