@@ -59,10 +59,11 @@ commute_df <- do.call(cbind, la_tract_modesplit)
 
 # Retrieve the tract IDs and then attach them to the df as well
 tract_fetch <- acs.fetch(endyear = 2015, span = 5, geography = la_tracts, table.number = "B08301", col.names = "pretty")
-tract_id <- paste0(str_pad(tract_fetch@geography$state, 2, "left", pad="0"), 
-                   str_pad(tract_fetch@geography$county, 3, "left", pad="0"), 
-                   str_pad(tract_fetch@geography$tract, 6, "left", pad="0"))
-commute_df <- cbind(tract_id, commute_df)
+GEOID <- paste0(str_pad(tract_fetch@geography$state, 2, "left", pad="0"), 
+                str_pad(tract_fetch@geography$county, 3, "left", pad="0"),
+                str_pad(tract_fetch@geography$tract, 6, "left", pad="0"))
+
+commute_df <- cbind(GEOID, commute_df)
 
 # Export as CSV
 write.csv(commute_df, "C:/Users/Tim/Documents/GitHub/acs-commute-shiny/acs_commute/data/acs_mode.csv")

@@ -13,9 +13,11 @@ geo_vars <- c(
   "LA County - Tract" = "county_tract"
 )
 map_color_vars <- c(
-  "Latest 5-Year Estimate" = "5yr_est",
+  "Single 5-Year Estimate" = "5yr_est",
   "Change over Time" = "time_change"
 )
+#years <- c(2010,2011,2012,2013,2014,2015)
+years <- c(2015,2014,2013,2012,2011,2010)
 
 navbarPage("ACS Means of Transportation to Work", id="nav",
            
@@ -35,11 +37,23 @@ navbarPage("ACS Means of Transportation to Work", id="nav",
                                       draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
                                       width = 330, height = "auto",
                                       
-                                      h2("Map explorer"),
+                                      h3("ACS Means of Transportation to Work"),
                                       
                                       selectInput("geography","Geography",geo_vars, selected = "city_tract"),
                                       selectInput("mode", "Commute Mode", mode_vars, selected = "car_pct"),
                                       selectInput("maptype", "Map Color", map_color_vars, selected = "5yr_est"),
+                                      conditionalPanel(
+                                        condition = "input.maptype == '5yr_est'",
+                                        selectInput("yearview", "5-Year Estimate Ending In", years, selected = 2015)
+                                      ),
+                                      conditionalPanel(
+                                        condition = "input.maptype == 'time_change'",
+                                        sliderInput(inputId = "yearRange",
+                                                    label = "Select the Year Range",
+                                                    sep = "",
+                                                    step = 1,
+                                                    min = 2010, max = 2015, value = c(2010,2015))
+                                      ),
                                       HTML("<i>This map was compiled based on data from the American Communities Survey. To see a list of
                                              currently available ACS Estimates, visit <a href='https://www.socialexplorer.com/data/metadata/'>
                                         Social Explorer</a>. To understand the differences between different types of ACS Estimates,
