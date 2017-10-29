@@ -16,12 +16,11 @@ map_color_vars <- c(
   "Single 5-Year Estimate" = "5yr_est",
   "Change over Time" = "time_change"
 )
-#years <- c(2010,2011,2012,2013,2014,2015)
+
 years <- c(2015,2014,2013,2012,2011,2010)
 
-navbarPage("ACS Means of Transportation to Work", id="nav",
-           
-           tabPanel("Interactive map",
+
+fluidPage(           
                     div(class="outer",
                         
                         tags$head(
@@ -37,7 +36,7 @@ navbarPage("ACS Means of Transportation to Work", id="nav",
                                       draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
                                       width = 330, height = "auto",
                                       
-                                      h3("ACS Means of Transportation to Work"),
+                                      h3("Means of Transportation to Work"),
                                       
                                       selectInput("geography","Geography",geo_vars, selected = "city_tract"),
                                       selectInput("mode", "Commute Mode", mode_vars, selected = "car_pct"),
@@ -60,12 +59,8 @@ navbarPage("ACS Means of Transportation to Work", id="nav",
                                              visit <a href='https://www.census.gov/programs-surveys/acs/guidance/estimates.html'>this ACS
                                              Guidance Document</a></i>")
                                       
-                                      #plotOutput("histCentile", height = 200),
-                                      #plotOutput("scatterCollegeIncome", height = 250)
                         )
                         
                     )
-           ),
-           
-           conditionalPanel("false", icon("crosshair"))
+
 )
