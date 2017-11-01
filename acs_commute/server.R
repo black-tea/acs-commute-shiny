@@ -9,7 +9,7 @@ library(leaflet) # For interactive mapping
 library(rgdal) # For importing shapefiles
 library(sf) # For manipulating spatial data
 #api.key.install(key="00a2d85a7c7b1346879d0e355cc0361f30188f28") # Personal Email Census API Key
-api.key.install(key="9890281ff4c9bdd8980fc6ee6692b00769853229") # City Email Census API Key
+#api.key.install(key="9890281ff4c9bdd8980fc6ee6692b00769853229") # City Email Census API Key
 options(tigris_use_cache = TRUE)
 
 ##### Download / Prep Data #####
