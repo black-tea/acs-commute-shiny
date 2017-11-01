@@ -33,7 +33,8 @@ la_tract_modesplit <- lapply(years, function(x) {
   print(x)
   
   # Use the ACS API to query for the data
-  acs_result <- acs.fetch(endyear = x, 
+  acs_result <- acs.fetch(key="00a2d85a7c7b1346879d0e355cc0361f30188f28",
+                          endyear = x, 
                           span = 5,
                           geography = la_tracts,
                           table.number = "B08301",
