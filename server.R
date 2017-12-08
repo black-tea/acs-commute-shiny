@@ -144,15 +144,15 @@ function(input, output, session) {
     
     # Legend  & Popup Title
     if(input$maptype == '5yr_est'){
-      legend_title <- paste0("Percent Commuting<br>by ", modevars[input$mode])
+      legend_title <- paste0("People Commuting<br>by ", modevars[input$mode])
       popup_title <- paste0("Percent Commuting by ", modevars[input$mode])
     } else if (input$maptype == 'time_change'){
-      legend_title <- paste0("Change in Percent<br>Commuting by<br>", modevars[input$mode])
+      legend_title <- paste0("Change in<br>Commuting by<br>", modevars[input$mode])
       popup_title <- paste0("Change in Percent Commuting by ", modevars[input$mode])
     }  
 
     # Update mode, popup, and color scales based on mode input
-    popup <- paste0("GEOID: ", commute_data()$GEOID, "<br>", popup_title, ": ", round(mode_data(),2))
+    popup <- paste0(round(mode_data(),2),"%")
     pal <- colorNumeric(
       palette = "YlGnBu",
       domain = mode_data()
