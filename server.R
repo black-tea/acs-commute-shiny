@@ -5,16 +5,13 @@
 ##### Setup #####
 library(leaflet) # For interactive mapping
 library(sf) # For manipulating spatial data
-<<<<<<< HEAD:server.R
 library(tigris)
 
 ### Load data from prep.R
 la_boundary <- readRDS('la_boundary.rds')
 la_tract_modesplit <- readRDS('la_tract_modesplit.rds')
 tracts <- readRDS('la_tracts.rds')
-=======
-#api.key.install(key="00a2d85a7c7b1346879d0e355cc0361f30188f28") # Personal Email Census API Key
-#api.key.install(key="9890281ff4c9bdd8980fc6ee6692b00769853229") # City Email Census API Key
+
 options(tigris_use_cache = TRUE)
 
 ##### Download / Prep Data #####
