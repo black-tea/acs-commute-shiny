@@ -36,7 +36,7 @@ fluidPage(
                                       draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
                                       width = 330, height = "auto",
                                       
-                                      h3("Means of Transportation to Work"),
+                                      h3("How Does LA Get to Work?"),
                                       
                                       selectInput("geography","Geography",geo_vars, selected = "city_tract"),
                                       selectInput("mode", "Commute Mode", mode_vars, selected = "car_pct"),
