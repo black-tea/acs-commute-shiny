@@ -1,6 +1,7 @@
 ##### Setup
 library(acs)
 library(tigris)
+library(yaml)
 
 ##### LA City Boundary
 la_boundary <- st_read('data/la_boundary/CityBoundary.shp')
@@ -14,7 +15,8 @@ tracts <- tracts(state = 'CA', county = "Los Angeles", cb=TRUE)
 tracts <- st_transform(tracts, 4326)
 
 ##### ACS: Means of Transportation for all census tracts in the Los Angeles County
-api.key.install(key="9890281ff4c9bdd8980fc6ee6692b00769853229") # ACS Data API Key
+config = yaml.load_file("config.yml")
+api.key.install(key=config$acs$key) 
 years <- c(2010,2011,2012,2013,2014,2015)
 la_tracts <- geo.make(state = "CA", county = "Los Angeles", tract = "*")
 
