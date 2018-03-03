@@ -4,7 +4,7 @@ library(tigris)
 library(yaml)
 
 ##### LA City Boundary
-la_boundary <- st_read('data/la_boundary/CityBoundary.shp')
+la_boundary <- st_read('data/LACityBoundary/CityBoundary.shp')
 la_boundary <- st_transform(la_boundary, 4326)
 
 ##### Tigris: ACS Boundaries
@@ -68,8 +68,8 @@ la_tract_modesplit <- lapply(years, function(x) {
 names(la_tract_modesplit) <- years
 
 # Output to .rds
-saveRDS(tracts, 'la_tracts.rds')
-saveRDS(la_tract_modesplit, 'la_tract_modesplit.rds')
-saveRDS(la_boundary, 'la_boundary.rds')
+saveRDS(tracts, 'data/la_tracts.rds')
+saveRDS(la_tract_modesplit, 'data/la_tract_modesplit.rds')
+saveRDS(la_boundary, 'data/la_boundary.rds')
 
 
