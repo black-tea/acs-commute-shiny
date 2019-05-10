@@ -1,12 +1,8 @@
-#####                                                          #####
-##### This app displays census tract-level commute mode splits #####
-#####                                                          #####
-
 ##### Setup #####
-library(leaflet) # For interactive mapping
-library(sf) # For manipulating spatial data
+library(leaflet) 
+library(sf) 
 library(tigris)
-
+    
 ### Load data from prep.R
 la_boundary <- readRDS('data/la_boundary.rds')
 la_tract_modesplit <- readRDS('data/la_tract_modesplit.rds')
@@ -17,7 +13,7 @@ options(tigris_use_cache = TRUE)
 ##### Interactive Map #####
 function(input, output, session) {
   
-  ### Create the map
+  # Create the map
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles("CartoDB.Positron") %>%
@@ -26,7 +22,7 @@ function(input, output, session) {
                   fill = FALSE)
   })
   
-  ### Calculate the values that will be mapped, based on UI Input
+  # Calculate the values that will be mapped, based on UI Input
   commute_merged <- reactive({
     if(input$maptype == '5yr_est'){
       
@@ -40,20 +36,21 @@ function(input, output, session) {
       yr1 <- toString(input$yearRange[1])
       yr2 <- toString(input$yearRange[2])
       
-      diff_df <- within(merge(la_tract_modesplit[[yr2]],la_tract_modesplit[[yr1]],by="GEOID"), {
+      # Calculate the difference for each tract
+      diff_df <- within(merge(la_tract_modesplit[[yr2]], la_tract_modesplit[[yr1]], by="GEOID"), {
         car_pct <- car_pct.x - car_pct.y
         transit_pct <- transit_pct.x - transit_pct.y
         bicycle_pct <- bicycle_pct.x - bicycle_pct.y
         walk_pct <- walk_pct.x - walk_pct.y
-      })[,c("GEOID","car_pct","transit_pct","bicycle_pct","walk_pct")]
+      })[,c("GEOID", "car_pct", "transit_pct", "bicycle_pct", "walk_pct")]
       
-      result_df <- geo_join(tracts,diff_df, "GEOID", "GEOID")
+      result_df <- tigris::geo_join(tracts,diff_df, "GEOID", "GEOID")
     }
     
     return(result_df)
   })
   
-  ### Clip the geography, if needed, based on UI Input
+  # Clip the geography, if needed, based on UI Input
   commute_data <- reactive({
     geography <- input$geography
     if (geography == "city_tract"){
@@ -64,14 +61,14 @@ function(input, output, session) {
     return(clip_result)
   })
   
-  ### Subset out the mode, based on UI Input
+  # Subset out the mode, based on UI Input
   mode_data <- reactive({
     mode <- input$mode
     return(commute_data()[[mode]])
   })
 
   
-  ### Update Map Symbology & Legend based on UI Input
+  # Update Map Symbology & Legend based on UI Input
   observe({
     
     # Formatting Mode for Legend & Popup
@@ -91,10 +88,7 @@ function(input, output, session) {
 
     # Update mode, popup, and color scales based on mode input
     popup <- paste0(round(mode_data(),2),"%")
-    pal <- colorNumeric(
-      palette = "YlGnBu",
-      domain = mode_data()
-    )
+    pal <- colorNumeric(palette = "YlGnBu", domain = mode_data())
     
     # Update the map
     leafletProxy("map") %>%
